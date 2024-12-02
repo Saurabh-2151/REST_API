@@ -20,8 +20,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
     final imageUrl = imageUrlController.text.trim();
 
     if (title.isEmpty || price == null || price <= 0 || imageUrl.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill all fields with valid data')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Please fill all fields with valid data')));
       return;
     }
 
@@ -37,11 +37,11 @@ class _AddProductScreenState extends State<AddProductScreen> {
         addedProduct = result;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Product added successfully')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Product added successfully')));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add product')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Failed to add product')));
     }
   }
 
@@ -51,39 +51,81 @@ class _AddProductScreenState extends State<AddProductScreen> {
       appBar: AppBar(title: const Text('Add New Product')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Title'),
-            ),
-            TextField(
-              controller: priceController,
-              decoration: const InputDecoration(labelText: 'Price'),
-              keyboardType: TextInputType.number,
-            ),
-            TextField(
-              controller: imageUrlController,
-              decoration: const InputDecoration(labelText: 'Image URL'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: addNewProduct,
-              child: const Text('Add Product'),
-            ),
-            const SizedBox(height: 20),
-            if (addedProduct != null) ...[
-              Text("${addedProduct!['id']}"),
-              Text(addedProduct!['title'], style: const TextStyle(
-                  fontSize: 20, fontWeight: FontWeight.bold)),
-              Text("\$${addedProduct!['price']}",
-                  style: const TextStyle(fontSize: 16)),
-              SizedBox(
-                height: 200,
-                child: Image.network(addedProduct!['image'], fit: BoxFit.cover),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(),
+                ),
               ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: priceController,
+                decoration: const InputDecoration(
+                  labelText: 'Price',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: imageUrlController,
+                decoration: const InputDecoration(
+                  labelText: 'Image URL',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: addNewProduct,
+                child: const Text('Add Product'),
+              ),
+              const SizedBox(height: 20),
+              if (addedProduct != null)
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: 200,
+                          child: Image.network(
+                            addedProduct!['image'],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          "Product ID: ${addedProduct!['id']}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "Name: ${addedProduct!['title']}",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "Price: \$${addedProduct!['price']}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
             ],
-          ],
+          ),
         ),
       ),
     );
