@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:rest__api/api_methods/add_product.dart';
 import 'package:rest__api/api_methods/update_product.dart';
@@ -102,7 +103,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
             final products = snapshot.data!;
             return GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: kIsWeb ? 3 : 2,
                 crossAxisSpacing: 10.0,
                 mainAxisSpacing: 10.0,
                 childAspectRatio: 0.5

@@ -1,17 +1,20 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 class ApiService {
   final String baseUrl = 'https://fakestoreapi.com/products';
+  final Dio dio;
+
+  ApiService() : dio = Dio();
 
   Future<List<dynamic>> fetchProducts() async {
     try {
-      final response = await http.get(Uri.parse(baseUrl));
+      final response = await dio.get(baseUrl);
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return response.data;
       } else {
-        throw Exception('Failed to load products: ${response.body}');
+        throw Exception('Failed to load products: ${response.statusMessage}');
       }
     } catch (e) {
       throw Exception('Error fetching products: $e');
@@ -20,16 +23,16 @@ class ApiService {
 
   Future<Map<String, dynamic>> addProduct(Map<String, dynamic> newProduct) async {
     try {
-      final response = await http.post(
-        Uri.parse(baseUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(newProduct),
+      final response = await dio.post(
+        baseUrl,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: json.encode(newProduct),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return json.decode(response.body);
+        return response.data;
       } else {
-        throw Exception('Failed to add product: ${response.body}');
+        throw Exception('Failed to add product: ${response.statusMessage}');
       }
     } catch (e) {
       throw Exception('Error adding product: $e');
@@ -38,16 +41,16 @@ class ApiService {
 
   Future<Map<String, dynamic>> updateProduct(int productId, Map<String, dynamic> updatedProduct) async {
     try {
-      final response = await http.put(
-        Uri.parse('$baseUrl/$productId'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(updatedProduct),
+      final response = await dio.put(
+        '$baseUrl/$productId',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: json.encode(updatedProduct),
       );
 
       if (response.statusCode == 200) {
-        return json.decode(response.body);
+        return response.data;
       } else {
-        throw Exception('Failed to update product: ${response.body}');
+        throw Exception('Failed to update product: ${response.statusMessage}');
       }
     } catch (e) {
       throw Exception('Error updating product: $e');
@@ -56,10 +59,10 @@ class ApiService {
 
   Future<void> deleteProduct(int productId) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$productId'));
+      final response = await dio.delete('$baseUrl/$productId');
 
       if (response.statusCode != 200) {
-        throw Exception('Failed to delete product: ${response.body}');
+        throw Exception('Failed to delete product: ${response.statusMessage}');
       }
     } catch (e) {
       throw Exception('Error deleting product: $e');
